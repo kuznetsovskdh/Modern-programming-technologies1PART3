@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>🔐 Вход в систему</h1>
+            <p>Войдите для управления товарами</p>
+        </div>
+
+        <!-- Сообщения об успехе/ошибках -->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            ❌ <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success">
+            ✅ <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${param.registered}" class="alert alert-success">
+            ✅ Регистрация успешна! Войдите в систему.
+        </div>
+
+        <!-- Форма входа -->
+        <form th:action="@{/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">👤 Имя пользователя</label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       placeholder="Введите имя пользователя"
+                       required
+                       autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">🔑 Пароль</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Введите пароль"
+                       required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                🚀 Войти
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Нет аккаунта? <a th:href="@{/register}">Зарегистрироваться</a></p>
+        </div>
+
+        <!-- Информация о тестовых аккаунтах -->
+        <div class="test-accounts">
+            <h3>🧪 Тестовые аккаунты:</h3>
+            <ul>
+                <li><strong>Администратор:</strong> admin / admin</li>
+                <li><strong>Пользователь:</strong> user / user</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

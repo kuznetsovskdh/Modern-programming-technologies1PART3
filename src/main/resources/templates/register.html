@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>📝 Регистрация</h1>
+            <p>Создайте новый аккаунт</p>
+        </div>
+
+        <!-- Сообщения об ошибках -->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            ❌ <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Форма регистрации -->
+        <form th:action="@{/register}"
+              th:object="${user}"
+              method="post"
+              class="auth-form">
+
+            <div class="form-group">
+                <label for="username">👤 Имя пользователя</label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       th:value="${user.username}"
+                       placeholder="Минимум 3 символа"
+                       required
+                       autofocus>
+                <span th:if="${#fields.hasErrors('username')}"
+                      th:errors="*{username}"
+                      class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">🔑 Пароль</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Минимум 4 символа"
+                       required>
+                <span th:if="${#fields.hasErrors('password')}"
+                      th:errors="*{password}"
+                      class="error-message"></span>
+            </div>
+
+            <!-- Скрытое поле роли - всегда USER -->
+            <input type="hidden" name="role" value="USER">
+
+            <button type="submit" class="btn btn-primary">
+                ✨ Зарегистрироваться
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,28 @@
 <body>
 <div class="container">
   <header>
-    <h1>🛍️ Система управления товарами</h1>
-    <p class="subtitle">Добавляйте, редактируйте и удаляйте товары</p>
+    <div class="header-content">
+      <div>
+        <h1>🛍️ Система управления товарами</h1>
+        <p class="subtitle">Добавляйте, редактируйте и удаляйте товары</p>
+      </div>
+      <!-- Панель пользователя -->
+      <div class="user-panel">
+                <span class="user-info">
+                    <span sec:authorize="hasRole('ADMIN')" class="role-badge badge-admin">👑 ADMIN</span>
+                    <span sec:authorize="hasRole('USER')" class="role-badge badge-user">👤 USER</span>
+                    <strong sec:authentication="name">Пользователь</strong>
+                </span>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <button type="submit" class="btn btn-logout">🚪 Выход</button>
+        </form>
+      </div>
+    </div>
   </header>
 
   <main>
-    <!-- Форма добавления/редактирования товара -->
-    <section class="form-section">
+    <!-- Форма добавления/редактирования товара - ТОЛЬКО ДЛЯ ADMIN -->
+    <section class="form-section" sec:authorize="hasRole('ADMIN')">
       <h2 th:text="${editMode} ? '✏️ Редактировать товар' : '➕ Добавить новый товар'">Добавить товар</h2>
 
       <form th:action="${editMode} ? @{/products/update/{id}(id=${product.id})} : @{/products/add}"
@@ -71,12 +87,20 @@
       </form>
     </section>
 
+    <!-- Сообщение для обычных пользователей -->
+    <section class="info-message" sec:authorize="hasRole('USER')">
+      <div class="alert alert-info">
+        ℹ️ Вы вошли как обычный пользователь. Вы можете только просматривать список товаров.
+        Для редактирования войдите как администратор.
+      </div>
+    </section>
+
     <!-- Таблица товаров -->
     <section class="table-section">
       <h2>📦 Список товаров</h2>
 
       <div th:if="${#lists.isEmpty(products)}" class="empty-state">
-        <p>📭 Товары отсутствуют. Добавьте первый товар!</p>
+        <p>📭 Товары отсутствуют. <span sec:authorize="hasRole('ADMIN')">Добавьте первый товар!</span></p>
       </div>
 
       <div th:unless="${#lists.isEmpty(products)}" class="table-wrapper">
@@ -87,20 +111,21 @@
             <th>Название</th>
             <th>Цена</th>
             <th>Количество</th>
-            <th>Действия</th>
+            <th sec:authorize="hasRole('ADMIN')">Действия</th>
           </tr>
           </thead>
           <tbody>
-          <tr th:each="prod : ${products}" th:classappend="${prod.stockQuantity < 10} ? 'low-stock' : ''">
+          <tr th:each="prod : ${products}"
+              th:classappend="${prod.stockQuantity < 10} ? 'low-stock' : ''">
             <td th:text="${prod.id}">1</td>
             <td th:text="${prod.name}">Название товара</td>
             <td th:text="${#numbers.formatDecimal(prod.price, 0, 'COMMA', 2, 'POINT')} + ' ₽'">1000.00 ₽</td>
             <td>
-                                    <span class="stock-badge"
-                                          th:classappend="${prod.stockQuantity < 10} ? 'badge-warning' : 'badge-success'"
-                                          th:text="${prod.stockQuantity}">50</span>
+                            <span class="stock-badge"
+                                  th:classappend="${prod.stockQuantity < 10} ? 'badge-warning' : 'badge-success'"
+                                  th:text="${prod.stockQuantity}">50</span>
             </td>
-            <td class="actions">
+            <td class="actions" sec:authorize="hasRole('ADMIN')">
               <a th:href="@{/products/edit/{id}(id=${prod.id})}"
                  class="btn-action btn-edit"
                  title="Редактировать">✏️</a>
@@ -121,7 +146,7 @@
   </main>
 
   <footer>
-    <p>© 2025 Система управления товарами | Сделано с Spring Boot & Thymeleaf</p>
+    <p>© 2025 Система управления товарами | Сделано с Spring Boot & Spring Security</p>
   </footer>
 </div>
 </body>

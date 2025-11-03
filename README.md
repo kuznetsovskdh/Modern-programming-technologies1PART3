@@ -1,1 +1,1 @@
-Modern-programming-technologies project products-management. A Java web application using Spring that implements the functions of adding, viewing, editing, and deleting records in a single database table through a web interface
+Modern-programming-technologies project products-management. A Java web application using Spring that implements the functions of adding, viewing, editing, and deleting records in a single database table through a web interface. PRODUCTS
